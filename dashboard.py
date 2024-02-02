@@ -17,11 +17,14 @@ app.layout = html.Div([
              ),
     html.Div([
         html.Div(className='card', children=[
-            html.P('Image') ]),
+            html.P('Choose Example'),
+            html.Img(src='assets/images/template_image.png', alt='Template Pictogram') ]),
         html.Div(className='card', children=[
-            html.P('Image') ]),
+            html.P('Choose Model'),
+            html.Img(src='assets/images/model_image.png', alt='Model Pictogram') ]),
         html.Div(className ='card', children=[
-            html.P('Image') ]),
+            html.P('Import Image'),
+            html.Img(src='assets/images/image.png', alt='Image Pictogram') ]),
         ], 
             className='row-container')
         ])
