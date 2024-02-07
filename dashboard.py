@@ -7,7 +7,7 @@ app.layout = html.Div([
     html.Div(
         children=[
                 html.P('File'),
-                html.P('Example'),
+                html.P('Show Demo'),
                 html.P('Add Window'),
                 html.P('Choose Model'),
                 html.P('Import Image'),
@@ -17,11 +17,8 @@ app.layout = html.Div([
              ),
     html.Div([
         html.Div(className='card', children=[
-            html.P('Choose Example'),
-            html.Img(src='assets/images/template_image.png', alt='Template Pictogram') ]),
-        html.Div(className='card', children=[
             html.P('Choose Model'),
-            html.Img(src='assets/images/model_image.png', alt='Model Pictogram') ]),
+            html.Img(src='assets/images/neural_network.png', alt='Model Pictogram') ]),
         html.Div(className ='card', children=[
             html.P('Import Image'),
             html.Img(src='assets/images/image.png', alt='Image Pictogram') ]),
