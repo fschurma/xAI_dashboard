@@ -32,6 +32,13 @@
     position: relative;
 }
 
+.card p {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .card img {
     width: 75px;
     height: 75px;
@@ -41,15 +48,6 @@
     left: 50%;
     transform: translateX(-50%);
 }
-
-.card p {
-    
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 
 .row-container {
     display: flex;
