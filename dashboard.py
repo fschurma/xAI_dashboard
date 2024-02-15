@@ -1,7 +1,9 @@
 import dash
+import base64
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
+from dash.exceptions import PreventUpdate
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -61,10 +63,13 @@ performance_model_2 = '0.85'
 model_1 = 'FCN ResNet50'
 model_2 = 'DeepLabV3 ResNet101'
 
+uploaded_image_content = None
+
 
 
 app.layout = html.Div([
     html.Div([
+        dcc.Store(id='image_store'),
         html.Div([
             html.P('File'),
             dbc.DropdownMenu(label='Show Demo',
@@ -141,7 +146,8 @@ app.layout = html.Div([
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'})           
-                    ])
+                    ]),
+                    html.Img(id='result_1_image')
                 ]),
                 html.Div(id='result_2_div', children=[
                     html.Div(id='filter_container', children=[
@@ -163,8 +169,8 @@ app.layout = html.Div([
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'})
-
-                ])
+                        ]),
+                    html.Img(id='result_2_image')
             ])
                 ], id='result_container'),
 
@@ -194,7 +200,7 @@ app.layout = html.Div([
     Output('row_container', 'style'),
     Input('result', 'n_clicks')
 )
-def show_result_div(n_clicks):
+def show_result_window_div(n_clicks):
     if n_clicks and n_clicks > 0:  # Überprüfen, ob das Element geklickt wurde
         result_1_div_style = {'display': 'block'}
         result_2_div_style = {'display': 'block'}
@@ -209,31 +215,22 @@ def show_result_div(n_clicks):
         performance_div_style = {'display': 'none'}
         card_container_style = {'opacity': 1}
         row_container_style = {'opacity': 1}
-
-
+        
     return result_1_div_style, result_2_div_style, difference_result_style, performance_div_style, card_container_style, row_container_style
 
-
-"""@app.callback(
-    Output('dropdown_1', 'style'),
-    Output('dropdown_2', 'style'),
-    Output('dropdown_3', 'style'),
-    [Input('p_element_1', 'n_clicks'),
-     Input('p_element_2', 'n_clicks'),
-     Input('p_element_3', 'n_clicks')])
-    
-def open_dropdown(p1_clicks, p2_clicks, p3_clicks):
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        return [{'display': 'none'}] * 3
+@app.callback(
+    Output('image_store', 'data'),  # Speichert den Upload-Inhalt in einem Dash Store
+    Input('import_image', 'contents'),
+    prevent_initial_call=True
+)
+def store_uploaded_image(contents):
+    global uploaded_image_content  # Damit können wir die globale Variable ändern
+    if contents is not None and len(contents) > 0:
+        # Der Inhalt ist eine Liste, wir nehmen den Inhalt des ersten Elements
+        uploaded_image_content = contents[0].encode("utf8").split(b";base64,")[1]  # Extrahiert den Bildinhalt
+        return uploaded_image_content  # Speichert den Inhalt des Uploads in der globalen Variable
     else:
-        prop_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        if prop_id == 'p_element_1':
-            return [{'display': 'block'}, {'display': 'none'}, {'display': 'none'}]
-        elif prop_id == 'p_element_2':
-            return [{'display': 'none'}, {'display': 'block'}, {'display': 'none'}]
-        elif prop_id == 'p_element_3':
-            return [{'display': 'none'}, {'display': 'none'}, {'display': 'block'}]"""
+        raise PreventUpdate  # Verhindert ein Update, wenn kein Upload erfolgt ist
 
 # Include CSS file
 app.css.append_css({
