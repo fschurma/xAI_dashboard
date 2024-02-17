@@ -1,12 +1,6 @@
 import dash
-import base64
-from dash import html, dcc, callback, Input, Output, State
+from dash import html, dcc, Input, Output
 import dash_bootstrap_components as dbc
-from dash.exceptions import PreventUpdate
-import tempfile
-import os
-import datetime
-import models
 import items
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -19,10 +13,8 @@ model_1 = 'FCN ResNet50'
 model_2 = 'DeepLabV3 ResNet101'
 
 
-
-app.layout = html.Div([
-        dcc.Store(id='image_store'),
-        html.Div([
+app.layout = html.Div(children=[
+        html.Div(children=[
             html.P('File'),
             dbc.DropdownMenu(label='Show Demo',
                             children = items.items_models_top_bar,
@@ -80,7 +72,7 @@ app.layout = html.Div([
             
 
 
-            html.Div([
+            html.Div([ 
                 html.Div(id='result_1_div', children=[
                     html.Div(id='filter_container', children=[
                         dbc.DropdownMenu(label='Model selection',
@@ -186,9 +178,6 @@ def parse_contents(contents, filename, date,):
         return html.Div([
             image_element
         ])
-    else:
-        # Wenn contents None ist, ein leeres Div-Element zurückgeben
-        return html.Div()
 
 @app.callback(
     Output('output-image-upload_1', 'children'),
@@ -214,8 +203,7 @@ def update_output(contents, filename, last_modified):
             parse_contents(c, n, d) for c, n, d in
             zip(contents, filename, last_modified)]
         return children, children
-    else:
-        return html.Div("No image uploaded")
+
 
 
 
@@ -225,4 +213,4 @@ app.css.append_css({
 })
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8051)
+    app.run_server(debug=True)
