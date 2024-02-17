@@ -1,61 +1,16 @@
 import dash
 import base64
-from dash import html, dcc
+from dash import html, dcc, callback, Input, Output, State
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
+import tempfile
+import os
+import datetime
+import models
+import items
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-items_models_top_bar = [
-    dbc.DropdownMenuItem('FCN ResNet50', id='fcn-resnet50_t'),
-    dbc.DropdownMenuItem('FCN ResNet101', id='fcn-resnet101_t'),
-    dbc.DropdownMenuItem('DeepLabV3 ResNet50', id='deeplabv3-resnet50_t'),
-    dbc.DropdownMenuItem('DeepLabV3 ResNet101', id='deeplabv3-resnet101_t'),
-    dbc.DropdownMenuItem('DeepLabV3 MobileNetV3-Large', id='deeplabv3-mobilenetv3-large_t'),
-    dbc.DropdownMenuItem('LR-ASPP MobileNetV3-Large', id='lr-aspp-mobilenetv3-large_t')
-    ]
-
-items_models_card = [
-    dbc.DropdownMenuItem('FCN ResNet50', id='fcn-resnet50_c'),
-    dbc.DropdownMenuItem('FCN ResNet101', id='fcn-resnet101_c'),
-    dbc.DropdownMenuItem('DeepLabV3 ResNet50', id='deeplabv3-resnet50_c'),
-    dbc.DropdownMenuItem('DeepLabV3 ResNet101', id='deeplabv3-resnet101_c'),
-    dbc.DropdownMenuItem('DeepLabV3 MobileNetV3-Large', id='deeplabv3-mobilenetv3-large_c'),
-    dbc.DropdownMenuItem('LR-ASPP MobileNetV3-Large', id='lr-aspp-mobilenetv3-large_c')
-    ]
-
-items_models_filter_section = [
-    dbc.DropdownMenuItem('FCN ResNet50', id='fcn-resnet50_f'),
-    dbc.DropdownMenuItem('FCN ResNet101', id='fcn-resnet101_f'),
-    dbc.DropdownMenuItem('DeepLabV3 ResNet50', id='deeplabv3-resnet50_f'),
-    dbc.DropdownMenuItem('DeepLabV3 ResNet101', id='deeplabv3-resnet101_f'),
-    dbc.DropdownMenuItem('DeepLabV3 MobileNetV3-Large', id='deeplabv3-mobilenetv3-large_f'),
-    dbc.DropdownMenuItem('LR-ASPP MobileNetV3-Large', id='lr-aspp-mobilenetv3-large_f')
-    ]
-
-items_windows = [
-    dbc.DropdownMenuItem('Result', id='result'),
-    dbc.DropdownMenuItem('Difference', id='difference')
-    ]
-
-items_method = [
-    dbc.DropdownMenuItem('Method 1', id='method_1'),
-    dbc.DropdownMenuItem('Method 2', id='method_2'),
-    dbc.DropdownMenuItem('Method 3', id='method_3'),
-    dbc.DropdownMenuItem('Method 4', id='method_4'),
-    dbc.DropdownMenuItem('Method 5', id='method_5'),
-    dbc.DropdownMenuItem('Method 6', id='method_6')
-    ]
-
-items_labels = [
-    dbc.DropdownMenuItem('Label 1', id='label_1'),
-    dbc.DropdownMenuItem('Label 2', id='label_2'),
-    dbc.DropdownMenuItem('Label 3', id='label_3'),
-    dbc.DropdownMenuItem('Label 4', id='label_4'),
-    dbc.DropdownMenuItem('Label 5', id='label_5'),
-    dbc.DropdownMenuItem('Label 6', id='label_6')
-    ]
 
 performance_model_1 = '0.95'
 performance_model_2 = '0.85'
@@ -63,35 +18,32 @@ performance_model_2 = '0.85'
 model_1 = 'FCN ResNet50'
 model_2 = 'DeepLabV3 ResNet101'
 
-uploaded_image_content = None
-
 
 
 app.layout = html.Div([
-    html.Div([
         dcc.Store(id='image_store'),
         html.Div([
             html.P('File'),
             dbc.DropdownMenu(label='Show Demo',
-                            children = items_models_top_bar,
+                            children = items.items_models_top_bar,
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'}
             ),
             dbc.DropdownMenu(label='Add Window',
-                            children = items_windows,
+                            children = items.items_windows,
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'}
             ),
             dbc.DropdownMenu(label='Choose Model',
-                            children=items_models_top_bar,
+                            children=items.items_models_top_bar,
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'}
             ),
             dbc.DropdownMenu(label='Import Image', children=[
-                            dbc.DropdownMenuItem(dcc.Upload(html.P('Import Image'), accept='.jpg, .png, .tiff'), id='import_image')],
+                            dbc.DropdownMenuItem(dcc.Upload(html.P('Import Image'), accept='.jpg, .png, .tiff', id='import_image'))],
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'})
@@ -112,65 +64,72 @@ app.layout = html.Div([
         html.Div([
             html.Div(id='dropdown_container', children=[
                 dbc.DropdownMenu( label='Choose Model',
-                children=items_models_card,
+                children=items.items_models_card,
                 direction='down',
                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0.5px solid black'}
                 )]
             ),
             html.Div(id='dropdown_container', children=[
                 dbc.DropdownMenu(label='Import Image', children=[
-                            dbc.DropdownMenuItem(dcc.Upload(html.P('Import Image'), accept='.jpg, .png, .tiff'), id='import_image')],
+                            dbc.DropdownMenuItem(dcc.Upload(html.P('Import Image'), accept='.jpg, .png, .tiff', id='import_image'))],
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'})
-                    ])
+                    ]),
+            
                 ], id='row_container'),
-        
+            
+
+
             html.Div([
                 html.Div(id='result_1_div', children=[
                     html.Div(id='filter_container', children=[
                         dbc.DropdownMenu(label='Model selection',
                                 size='sm',
-                                children=items_models_filter_section,
+                                children=items.items_models_filter_section,
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
                         dbc.DropdownMenu(label='Method selection',
                                 size='sm',
-                                children=items_method,
+                                children=items.items_method,
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
                         dbc.DropdownMenu(label='Model selection',
                                 size='sm',
-                                children=items_labels,
+                                children=items.items_labels,
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'})           
                     ]),
-                    html.Img(id='result_1_image')
+                    html.Div(id='image-upload-container_1', children=[
+                        html.Div(id='output-image-upload_1')]
+                        ),
                 ]),
                 html.Div(id='result_2_div', children=[
                     html.Div(id='filter_container', children=[
                         dbc.DropdownMenu(label='Model selection',
                                 size='sm',
-                                children=items_models_filter_section,
+                                children=items.items_models_filter_section,
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
                         dbc.DropdownMenu(label='Method selection',
                                 size='sm',
-                                children=items_method,
+                                children=items.items_method,
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
                         dbc.DropdownMenu(label='Model selection',
                                 size='sm',
-                                children=items_labels,
+                                children=items.items_labels,
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'})
                         ]),
-                    html.Img(id='result_2_image')
+                    html.Div(id='image-upload-container_2', children=[
+                        html.Div(id='output-image-upload_2')]
+                        ),     
             ])
                 ], id='result_container'),
 
@@ -188,7 +147,6 @@ app.layout = html.Div([
             ])
             ],id='difference_container')
         ])
- ])
 
 
 @app.callback(
@@ -218,19 +176,48 @@ def show_result_window_div(n_clicks):
         
     return result_1_div_style, result_2_div_style, difference_result_style, performance_div_style, card_container_style, row_container_style
 
-@app.callback(
-    Output('image_store', 'data'),  # Speichert den Upload-Inhalt in einem Dash Store
-    Input('import_image', 'contents'),
-    prevent_initial_call=True
-)
-def store_uploaded_image(contents):
-    global uploaded_image_content  # Damit können wir die globale Variable ändern
-    if contents is not None and len(contents) > 0:
-        # Der Inhalt ist eine Liste, wir nehmen den Inhalt des ersten Elements
-        uploaded_image_content = contents[0].encode("utf8").split(b";base64,")[1]  # Extrahiert den Bildinhalt
-        return uploaded_image_content  # Speichert den Inhalt des Uploads in der globalen Variable
+
+def parse_contents(contents, filename, date,):
+    print("Contents:", contents)  # Debugging-Ausdruck für den Inhalt des Bildes
+    if contents is not None:
+        # HTML-Element für das Bild erstellen
+        image_element = html.Img(src=contents)
+        # Einzelnes Div-Element mit allen Inhalten erstellen
+        return html.Div([
+            image_element
+        ])
     else:
-        raise PreventUpdate  # Verhindert ein Update, wenn kein Upload erfolgt ist
+        # Wenn contents None ist, ein leeres Div-Element zurückgeben
+        return html.Div()
+
+@app.callback(
+    Output('output-image-upload_1', 'children'),
+    Output('output-image-upload_2', 'children'),
+    Input('import_image', 'contents'),
+    Input('import_image', 'filename'),
+    Input('import_image', 'last_modified')
+)
+def update_output(contents, filename, last_modified):
+    # Überprüfen, ob contents eine Liste ist, wenn nicht, eine Liste daraus machen
+    if not isinstance(contents, list):
+        contents = [contents]
+    
+    if not isinstance(filename, list):
+        filename = [filename]
+    
+    if not isinstance(last_modified, list):
+        last_modified = [last_modified]
+
+    # Hier kannst du nun sicher sein, dass alle Eingabeparameter Listen sind
+    if contents:
+        children = [
+            parse_contents(c, n, d) for c, n, d in
+            zip(contents, filename, last_modified)]
+        return children, children
+    else:
+        return html.Div("No image uploaded")
+
+
 
 # Include CSS file
 app.css.append_css({
@@ -238,4 +225,4 @@ app.css.append_css({
 })
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8051)

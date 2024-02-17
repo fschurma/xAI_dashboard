@@ -155,10 +155,11 @@
     border-radius: 5px;
     padding: 5px;
     margin: 5px;
-    box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.2);
+    border: 0.5px solid rgba(150, 150, 150, 1);
     display: flex;
     flex-direction: row;
     font-family: 'Montserrat', sans-serif;
+    margin-bottom: 5px;
 }
 
 #card_container {
@@ -182,4 +183,26 @@
     flex-direction: row;
     justify-content: space-between;
     margin: 0px;
+}
+
+#image-upload-container_1,
+#image-upload-container_2 {
+    padding: 5px;
+    margin: 5px;
+    background: white;
+    border-radius: 5px;
+    display: flex;
+    border: 0.5px solid rgba(150, 150, 150, 1);
+    margin-bottom: 5px;
+}
+
+
+#output-image-upload_1 img,
+#output-image-upload_2 img {
+    width: 97%;
+    padding: 0px;
+    margin: 0px auto 0;
+    display: flex;
+
+
 }
