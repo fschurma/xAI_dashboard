@@ -2,6 +2,7 @@ import dash
 from dash import html, dcc, Input, Output
 import dash_bootstrap_components as dbc
 import items
+from models import SegNet
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -29,7 +30,7 @@ app.layout = html.Div(children=[
                             style={'margin': '5px'}
             ),
             dbc.DropdownMenu(label='Choose Model',
-                            children=items.items_models_top_bar(),
+                            children=[items.items_models_top_bar()],
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'}

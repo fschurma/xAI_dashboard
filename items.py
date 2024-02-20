@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 def items_models_top_bar():
     return [
         dbc.DropdownMenuItem('FCN ResNet50', id='fcn-resnet50_t'),
-        dbc.DropdownMenuItem('FCN ResNet101', id='fcn-resnet101_t'),
+        dbc.DropdownMenuItem('SegNet', id='SegNet_t'),
         dbc.DropdownMenuItem('DeepLabV3 ResNet50', id='deeplabv3-resnet50_t'),
         dbc.DropdownMenuItem('DeepLabV3 ResNet101', id='deeplabv3-resnet101_t'),
         dbc.DropdownMenuItem('DeepLabV3 MobileNetV3-Large', id='deeplabv3-mobilenetv3-large_t'),
@@ -14,7 +14,7 @@ def items_models_top_bar():
 def items_models_card (): 
     return [
         dbc.DropdownMenuItem('FCN ResNet50', id='fcn-resnet50_c'),
-        dbc.DropdownMenuItem('FCN ResNet101', id='fcn-resnet101_c'),
+        dbc.DropdownMenuItem('SegNet', id='SegNet_c'),
         dbc.DropdownMenuItem('DeepLabV3 ResNet50', id='deeplabv3-resnet50_c'),
         dbc.DropdownMenuItem('DeepLabV3 ResNet101', id='deeplabv3-resnet101_c'),
         dbc.DropdownMenuItem('DeepLabV3 MobileNetV3-Large', id='deeplabv3-mobilenetv3-large_c'),
@@ -25,7 +25,7 @@ def items_models_card ():
 def items_models_filter_section():
     return [
         dbc.DropdownMenuItem('FCN ResNet50', id='fcn-resnet50_f'),
-        dbc.DropdownMenuItem('FCN ResNet101', id='fcn-resnet101_f'),
+        dbc.DropdownMenuItem('SegNet', id='SegNet_f'),
         dbc.DropdownMenuItem('DeepLabV3 ResNet50', id='deeplabv3-resnet50_f'),
         dbc.DropdownMenuItem('DeepLabV3 ResNet101', id='deeplabv3-resnet101_f'),
         dbc.DropdownMenuItem('DeepLabV3 MobileNetV3-Large', id='deeplabv3-mobilenetv3-large_f'),
