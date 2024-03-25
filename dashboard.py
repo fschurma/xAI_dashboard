@@ -104,11 +104,14 @@ app.layout = html.Div(children=[
                                   ]),
 
                     html.Div(id='image-upload-container_1', children=[
-                        html.Div(id='output-image-upload_1'),
-                        html.Div(id='demo_upload_1'),
-                        html.Div(id='output-segmentation-1'),
-                        html.Div(id='layer_grad_cam_1'),
-                        html.Div(id='fa_1')
+                        dcc.Loading(id='loading-1', children=[
+                            html.Div(id='output-image-upload_1'),
+                            html.Div(id='demo_upload_1'),
+                            html.Div(id='output-segmentation-1'),
+                            html.Div(id='layer_grad_cam_1'),
+                            html.Div(id='fa_1')
+                    ], type='default')
+                        
                         
                         ]),
                 ]),
@@ -138,28 +141,33 @@ app.layout = html.Div(children=[
                         html.P(id='method_right')
                             ]),
                     html.Div(id='image-upload-container_2', children=[
-                        html.Div(id='output-image-upload_2'),
-                        html.Div(id='demo_upload_2'),
-                        html.Div(id='output-segmentation-2'),
-                        html.Div(id='layer_grad_cam_2')
-                        ]
-                        ),     
+                        dcc.Loading(id='loading-2', children=[
+                            html.Div(id='output-image-upload_2'),
+                            html.Div(id='demo_upload_2'),
+                            html.Div(id='output-segmentation-2'),
+                            html.Div(id='layer_grad_cam_2')
+                        ], type='default')
+                ]),     
             ])
                 ], id='result_container'),
 
             html.Div([
                 html.Div(id='difference_result', children=[
                     html.H4(id='difference_model_names'),
+                    dcc.Loading(id='loading-3', children=[
                         html.Div(
                              id='difference'
-                        )
+                            )
+                    ], type='default')
             ]),
 
                 html.Div(id='performance_div', children=[
                     html.H4(id='difference_method_names'),
-                    html.Div(
-                        id='difference_xAI'
-                        )
+                    dcc.Loading(id='loading-4', children=[
+                        html.Div(
+                            id='difference_xAI'
+                            )
+                    ], type='default')
                 ])
             ],id='difference_container')
             ])
