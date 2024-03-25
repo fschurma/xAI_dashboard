@@ -2,23 +2,27 @@ import dash
 from dash import html, dcc, Input, Output
 import dash_bootstrap_components as dbc
 import items
-from models import SegNet
+from predict_models import predict_fcn_resnet101, predict_fcn_resnet50, predict_deeplabv3_resnet50, predict_deeplabv3_resnet101, predict_deeplabv3_mobilenetv3_large
+import torch
+import numpy as np
+import base64
+from io import BytesIO
+from PIL import Image
+import io
+from methods import grad_cam, feature_ablation, saliency_maps
+import models
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-
-performance_model_1 = '0.95'
-performance_model_2 = '0.85'
-
-model_1 = 'FCN ResNet50'
-model_2 = 'DeepLabV3 ResNet101'
 
 
 app.layout = html.Div(children=[
         html.Div(children=[
             html.P('File'),
             dbc.DropdownMenu(label='Show Demo',
-                            children = items.items_models_top_bar(),
+                            children = [
+                                dbc.DropdownMenuItem('Show Demo', id='show_demo', n_clicks=0)
+                            ],
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'}
@@ -30,7 +34,7 @@ app.layout = html.Div(children=[
                             style={'margin': '5px'}
             ),
             dbc.DropdownMenu(label='Choose Model',
-                            children=[items.items_models_top_bar()],
+                            children=items.items_models_top_bar(),
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'}
@@ -78,142 +82,197 @@ app.layout = html.Div(children=[
                     html.Div(id='filter_container_1', children=[
                         dbc.DropdownMenu(label='Model selection',
                                 size='sm',
-                                children=items.items_models_filter_section(),
+                                children=items.items_models_filter_section1(),
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
+                        html.P(id='model_name_1'),
+                        dbc.DropdownMenu(label='Label selection',
+                                size='sm',
+                                children=items.items_labels_f1(),
+                                direction='down',
+                                toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
+                                style={'margin': '5px'}),
+                        html.P(id='label_1'),
                         dbc.DropdownMenu(label='Method selection',
                                 size='sm',
-                                children=items.items_method(),
+                                children=items.items_method_f1(),
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
-                        dbc.DropdownMenu(label='Model selection',
-                                size='sm',
-                                children=items.items_labels(),
-                                direction='down',
-                                toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
-                                style={'margin': '5px'})           
-                    ]),
+                        html.P(id='method_left')
+                                  ]),
+
                     html.Div(id='image-upload-container_1', children=[
-                        html.Div(id='output-image-upload_1')]
-                        ),
+                        html.Div(id='output-image-upload_1'),
+                        html.Div(id='demo_upload_1'),
+                        html.Div(id='output-segmentation-1'),
+                        html.Div(id='layer_grad_cam_1'),
+                        html.Div(id='fa_1')
+                        
+                        ]),
                 ]),
                 html.Div(id='result_2_div', children=[
                     html.Div(id='filter_container_2', children=[
                         dbc.DropdownMenu(label='Model selection',
                                 size='sm',
-                                children=items.items_models_filter_section(),
+                                children=items.items_models_filter_section2(),
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
+                        html.P(id='model_name_2'),
+                        dbc.DropdownMenu(label='Label selection',
+                                size='sm',
+                                children=items.items_labels_f2(),
+                                direction='down',
+                                toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
+                                style={'margin': '5px'}),
+                        
+                        html.P(id='label_2'),
                         dbc.DropdownMenu(label='Method selection',
                                 size='sm',
-                                children=items.items_method(),
+                                children=items.items_method_f2(),
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
-                        dbc.DropdownMenu(label='Model selection',
-                                size='sm',
-                                children=items.items_labels(),
-                                direction='down',
-                                toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
-                                style={'margin': '5px'})
-                        ]),
+                        html.P(id='method_right')
+                            ]),
                     html.Div(id='image-upload-container_2', children=[
-                        html.Div(id='output-image-upload_2')]
+                        html.Div(id='output-image-upload_2'),
+                        html.Div(id='demo_upload_2'),
+                        html.Div(id='output-segmentation-2'),
+                        html.Div(id='layer_grad_cam_2')
+                        ]
                         ),     
             ])
                 ], id='result_container'),
 
             html.Div([
                 html.Div(id='difference_result', children=[
-                        html.H4('Difference')
+                    html.H4(id='difference_model_names'),
+                        html.Div(
+                             id='difference'
+                        )
             ]),
 
                 html.Div(id='performance_div', children=[
-                    html.H4('Performance'),
-                    html.Div([
-                        html.P(f'Performance of the {model_1}: ' + performance_model_1),
-                        html.P(f'Performance of the {model_2}: ' + performance_model_2)
+                    html.H4(id='difference_method_names'),
+                    html.Div(
+                        id='difference_xAI'
+                        )
                 ])
-            ])
             ],id='difference_container')
-        ])
+            ])
 
 
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Image Upload
 
 
-def parse_contents(contents, filename, date,):
+def parse_contents(contents):
     print("Contents:", contents)  # Debugging-Ausdruck für den Inhalt des Bildes
     if contents is not None:
         # HTML-Element für das Bild erstellen
         image_element = html.Img(src=contents)
         # Einzelnes Div-Element mit allen Inhalten erstellen
-        return html.Div([
-            image_element
-        ])
+        return image_element
+
 
 @app.callback(
-    [Output('output-image-upload_1', 'children'),
-    Output('output-image-upload_2', 'children')],
-    [Input('import_image_1', 'contents'),
+    Output('output-image-upload_1', 'children'),
+    Output('output-image-upload_2', 'children'),
+    Input('import_image_1', 'contents'),
     Input('import_image_1', 'filename'),
     Input('import_image_1', 'last_modified'),
     Input('import_image_2', 'contents'),
     Input('import_image_2', 'filename'),
-    Input('import_image_2', 'last_modified')]
+    Input('import_image_2', 'last_modified')
 
 )
 def update_output_1(contents_1, filename_1, last_modified_1, contents_2, filename_2, last_modified_2):
+    
+    contents = []
+
+
     # Überprüfen, ob contents eine Liste ist, wenn nicht, eine Liste daraus machen
-    if not isinstance(contents_1, list) or isinstance(contents_2, list):
+    if not (isinstance(contents_1, list) or isinstance(contents_2, list)):
         if contents_1 is not None:
             contents = [contents_1]
         elif contents_2 is not None:
             contents = [contents_2]
     
-    if not isinstance(filename_1, list) or isinstance(filename_2, list):
+    if not (isinstance(filename_1, list) or isinstance(filename_2, list)):
         if filename_1 is not None:
             filename = [filename_1]
         elif filename_2 is not None:
             filename = [filename_2]
     
-    if not isinstance(last_modified_1, list) or isinstance(last_modified_2, list):
+    if not (isinstance(last_modified_1, list) or isinstance(last_modified_2, list)):
         if last_modified_1 is not None:
             last_modified = [last_modified_1]
         elif last_modified_2 is not None:
             last_modified = [last_modified_2]
         
-    # Hier kannst du nun sicher sein, dass alle Eingabeparameter Listen sind
     if contents:
         children = [
-            parse_contents(c, n, d) for c, n, d in
-            zip(contents, filename, last_modified)]
-        return children, children
+            parse_contents(c) for c in contents]
+        
+        img = children[0]
+
+
+        return img, img
     
+    else:
+        print ("No image uploaded. Please upload an image.")
+
+
+
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Demo, Upload and Results
 
 @app.callback(
     Output('result_1_div', 'style'),
     Output('result_2_div', 'style'),
+    Output('demo_upload_1','children'),
+    Output('demo_upload_2', 'children'),
     Output('difference_result', 'style'),
     Output('performance_div', 'style'),
     Output('card_container', 'style'),
     Output('row_container', 'style'),
     Input('result', 'n_clicks'),
     Input('import_image_1', 'contents'),
-    Input('import_image_2', 'contents')
-
+    Input('import_image_2', 'contents'),
+    Input('show_demo', 'n_clicks'),
+    allow_duplicate=True
 )
-
-def show_result_window_div(n_clicks, contents_1, contents_2):
-    if (n_clicks and n_clicks > 0) or contents_1 is not None or contents_2 is not None:  # Überprüfen, ob das Element geklickt wurde
+def show_result_window_div(n_clicks_1, contents_1, contents_2, n_clicks_demo):
+    if n_clicks_1 and n_clicks_1 > 0 or contents_1 is not None or contents_2 is not None:
         result_1_div_style = {'display': 'block'}
         result_2_div_style = {'display': 'block'}
         difference_result_style = {'display': 'block'}
         performance_div_style = {'display': 'block'}
         card_container_style = {'display': 'none'}
         row_container_style = {'display': 'none'}
+
+        img1 = ''
+        img2 = ''
+
+        return result_1_div_style, result_2_div_style, img1, img2, difference_result_style, performance_div_style, card_container_style, row_container_style
+
+    elif n_clicks_demo and n_clicks_demo > 0:
+        result_1_div_style = {'display': 'block'}
+        result_2_div_style = {'display': 'block'}
+        difference_result_style = {'display': 'block'}
+        performance_div_style = {'display': 'block'}
+        card_container_style = {'display': 'none'}
+        row_container_style = {'display': 'none'}
+
+
+        img1 = html.Img(src='assets/images/demo_picture.png', alt='Image 1')
+        img2 = html.Img(src='assets/images/demo_picture.png', alt='Image 2')
+
+        return result_1_div_style, result_2_div_style, img1, img2, difference_result_style, performance_div_style, card_container_style, row_container_style
     
     else:
         result_1_div_style = {'display': 'none'}
@@ -222,10 +281,1764 @@ def show_result_window_div(n_clicks, contents_1, contents_2):
         performance_div_style = {'display': 'none'}
         card_container_style = {'opacity': 1}
         row_container_style = {'opacity': 1}
-    
-    
-    return result_1_div_style, result_2_div_style, difference_result_style, performance_div_style, card_container_style, row_container_style
+        img1 = ''
+        img2 = ''
 
+    return result_1_div_style, result_2_div_style, img1, img2, difference_result_style, performance_div_style, card_container_style, row_container_style
+
+
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Segmentation
+
+@app.callback(
+    Output('output-segmentation-1', 'children'),
+    Input('fcn-resnet101_f1', 'n_clicks'),
+    Input('fcn-resnet50_f1', 'n_clicks'),
+    Input('deeplabv3-resnet50_f1', 'n_clicks'),
+    Input('deeplabv3-resnet101_f1', 'n_clicks'),
+    Input('deeplabv3-mobilenetv3-large_f1', 'n_clicks'),
+    allow_duplicate = True
+)
+
+def image_segmentation_filter_left(n_clicks_1,  n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5):
+
+    change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    
+    if 'fcn-resnet101_f1' in change_id:
+            
+            input_image, output_predictions = predict_fcn_resnet101('assets/images/demo_picture.png')
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+
+            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+            colors = (colors % 255).numpy().astype("uint8")
+
+            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+            r.putpalette(colors)
+
+            children = html.Img(src=r, alt='Segmented Image')
+
+            return children
+    
+
+    
+    elif 'fcn-resnet50_f1' in change_id:
+            
+            input_image, output_predictions = predict_fcn_resnet50('assets/images/demo_picture.png')
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+
+            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+            colors = (colors % 255).numpy().astype("uint8")
+
+            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+            r.putpalette(colors)
+
+            children = html.Img(src=r, alt='Segmented Image')
+
+            return children
+    
+    elif 'deeplabv3-resnet50_f1' in change_id:
+                
+            input_image, output_predictions = predict_deeplabv3_resnet50('assets/images/demo_picture.png')
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+    
+            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+            colors = (colors % 255).numpy().astype("uint8")
+    
+            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+            r.putpalette(colors)
+            children = html.Img(src=r, alt='Segmented Image')
+    
+            return children
+    
+    elif 'deeplabv3-resnet101_f1' in change_id:
+                    
+            input_image, output_predictions = predict_deeplabv3_resnet101('assets/images/demo_picture.png')
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+    
+            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+            colors = (colors % 255).numpy().astype("uint8")
+        
+            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+            r.putpalette(colors)
+            children = html.Img(src=r, alt='Segmented Image')
+        
+            return children
+    
+    elif 'deeplabv3-mobilenetv3-large_f1' in change_id:
+                            
+            input_image, output_predictions = predict_deeplabv3_mobilenetv3_large('assets/images/demo_picture.png')
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+                
+            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+            colors = (colors % 255).numpy().astype("uint8")
+                
+            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+            r.putpalette(colors)
+
+            children = html.Img(src=r, alt='Segmented Image')
+                
+            return children
+    
+
+
+@app.callback(
+    Output('output-segmentation-2', 'children'),
+    Input('fcn-resnet101_f2', 'n_clicks'),
+    Input('fcn-resnet50_f2', 'n_clicks'),
+    Input('deeplabv3-resnet50_f2', 'n_clicks'),
+    Input('deeplabv3-resnet101_f2', 'n_clicks'),
+    Input('deeplabv3-mobilenetv3-large_f2', 'n_clicks'),
+    allow_duplicate = True
+)
+
+def image_segmentation_filter_right(n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5):
+
+
+    change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+
+    if 'fcn-resnet101_f2' in change_id:
+            
+            input_image, output_predictions = predict_fcn_resnet101('assets/images/demo_picture.png')
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+
+            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+            colors = (colors % 255).numpy().astype("uint8")
+
+            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+            r.putpalette(colors)
+
+            children = html.Img(src=r, alt='Segmented Image')
+
+            print("Children:", type(children))
+
+
+            return children
+    
+    elif 'fcn-resnet50_f2' in change_id:
+            
+            
+            input_image, output_predictions = predict_fcn_resnet50('assets/images/demo_picture.png')
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+
+            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+            colors = (colors % 255).numpy().astype("uint8")
+
+            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+            r.putpalette(colors)
+
+            children = html.Img(src=r, alt='Segmented Image')
+
+            return children
+    
+    elif 'deeplabv3-resnet50_f2' in change_id:
+            
+                    
+            input_image, output_predictions = predict_deeplabv3_resnet50('assets/images/demo_picture.png')
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+        
+            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+            colors = (colors % 255).numpy().astype("uint8")
+        
+            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+            r.putpalette(colors)
+
+            children = html.Img(src=r, alt='Segmented Image')
+        
+            return children
+    
+    elif 'deeplabv3-resnet101_f2' in change_id:
+
+                            
+            input_image, output_predictions = predict_deeplabv3_resnet101('assets/images/demo_picture.png')
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+            
+            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+            colors = (colors % 255).numpy().astype("uint8")
+                
+            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+            r.putpalette(colors)
+
+            children = html.Img(src=r, alt='Segmented Image')
+                
+            return children
+    
+    elif 'deeplabv3-mobilenetv3-large_f2' in change_id:
+            
+                                    
+            input_image, output_predictions = predict_deeplabv3_mobilenetv3_large('assets/images/demo_picture.png')
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+                        
+            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+            colors = (colors % 255).numpy().astype("uint8")
+                        
+            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+            r.putpalette(colors)
+
+            children = html.Img(src=r, alt='Segmented Image')
+
+            return children
+    
+                        
+    
+    
+@app.callback(
+    Output('model_name_1', 'children'),
+    Input('fcn-resnet50_f1', 'n_clicks'),
+    Input('fcn-resnet101_f1', 'n_clicks'),
+    Input('deeplabv3-resnet50_f1', 'n_clicks'),
+    Input('deeplabv3-resnet101_f1', 'n_clicks'),
+    Input('deeplabv3-mobilenetv3-large_f1', 'n_clicks'),
+    allow_duplicate = True
+)
+
+def show_model_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5):
+
+    change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+
+    if 'fcn-resnet50_f1' in change_id:
+        return 'FCN ResNet50'
+    elif 'fcn-resnet101_f1' in change_id:
+        return 'FCN ResNet101'
+    elif 'deeplabv3-resnet50_f1' in change_id:
+        return 'DeepLabV3 ResNet50'
+    elif 'deeplabv3-resnet101_f1' in change_id:
+        return 'DeepLabV3 ResNet101'
+    elif 'deeplabv3-mobilenetv3-large_f1' in change_id:
+        return 'DeepLabV3 MobileNetV3-Large'
+    else:
+        return ''
+    
+@app.callback(
+    Output('model_name_2', 'children'),
+    Input('fcn-resnet50_f2', 'n_clicks'),
+    Input('fcn-resnet101_f2', 'n_clicks'),
+    Input('deeplabv3-resnet50_f2', 'n_clicks'),
+    Input('deeplabv3-resnet101_f2', 'n_clicks'),
+    Input('deeplabv3-mobilenetv3-large_f2', 'n_clicks'),
+    allow_duplicate = True
+)
+
+def show_model_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5):
+
+    change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+
+    if 'fcn-resnet50_f2' in change_id:
+        return 'FCN ResNet50'
+    elif 'fcn-resnet101_f2' in change_id:
+        return 'FCN ResNet101'
+    elif 'deeplabv3-resnet50_f2' in change_id:
+        return 'DeepLabV3 ResNet50'
+    elif 'deeplabv3-resnet101_f2' in change_id:
+        return 'DeepLabV3 ResNet101'
+    elif 'deeplabv3-mobilenetv3-large_f2' in change_id:
+        return 'DeepLabV3 MobileNetV3-Large'
+    else:
+        return ''
+    
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+## xAI
+
+@app.callback(
+     Output('layer_grad_cam_1', 'children'),
+     Input('layer_grad_cam_f1', 'n_clicks'),
+     Input('fa_f1', 'n_clicks'),
+     Input('saliency_f1', 'n_clicks'),
+     Input('model_name_1', 'children'),
+     Input('label_1', 'children'))
+
+def show_xAI_results_left (n_clicks_1, n_clicks_2, n_clicks_3, children_1, children_2):
+
+    change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+
+    if ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(), 2)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        fa_50 = feature_ablation(models.fcn_resnet50(), 2)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        saliency_50 = saliency_maps(models.fcn_resnet50(), 2)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(), 6)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        fa_50 = feature_ablation(models.fcn_resnet50(), 6)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        saliency_50 = saliency_maps(models.fcn_resnet50(), 6)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+        
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(), 7)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        fa_50 = feature_ablation(models.fcn_resnet50(), 7)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        saliency_50 = saliency_maps(models.fcn_resnet50(), 7)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(), 14)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        fa_50 = feature_ablation(models.fcn_resnet50(), 14)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        saliency_50 = saliency_maps(models.fcn_resnet50(), 14)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(), 15)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        fa_50 = feature_ablation(models.fcn_resnet50(), 15)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        saliency_50 = saliency_maps(models.fcn_resnet50(), 15)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(), 19)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        fa_50 = feature_ablation(models.fcn_resnet50(), 19)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        saliency_50 = saliency_maps(models.fcn_resnet50(), 19)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),2)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        fa_101 = feature_ablation(models.fcn_resnet101(),2)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),2)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),6)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        fa_101 = feature_ablation(models.fcn_resnet101(),6)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),6)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),7)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        fa_101 = feature_ablation(models.fcn_resnet101(),7)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),7)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),14)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        fa_101 = feature_ablation(models.fcn_resnet101(),14)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),14)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),15)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        fa_101 = feature_ablation(models.fcn_resnet101(),15)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),15)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),19)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    
+    elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        fa_101 = feature_ablation(models.fcn_resnet101(),19)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),19)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),2)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),2)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),2)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),6)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),6)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),6)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),7)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),7)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),7)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),14)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),14)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),14)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),15)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),15)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),15)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),19)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),19)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),19)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) > 0 and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),2)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),2)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('salinecy_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),2)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),6)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),6)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),6)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),7)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),7)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),7)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),14)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),14)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),14)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),15)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),15)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),15)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),19)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),19)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),19)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),2)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),2)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),2)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),6)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),6)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),6)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),7)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),7)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),7)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),14)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),14)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),14)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),15)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),15)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),15)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),19)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),19)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),19)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+@app.callback(
+     Output('layer_grad_cam_2', 'children'),
+     Input('layer_grad_cam_f2', 'n_clicks'),
+     Input('fa_f2', 'n_clicks'),
+     Input('saliency_f2', 'n_clicks'),
+     Input('model_name_2', 'children'),
+     Input('label_2', 'children'))
+
+def show_xAI_results_right (n_clicks_1, n_clicks_2, n_clicks_3, children_1, children_2):
+
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+
+    if ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(),2)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        fa_50 = feature_ablation(models.fcn_resnet50(), 2)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        saliency_50 = saliency_maps(models.fcn_resnet50(), 2)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(),6)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        fa_50 = feature_ablation(models.fcn_resnet50(),6)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        saliency_50 = saliency_maps(models.fcn_resnet50(),6)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(),7)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        fa_50 = feature_ablation(models.fcn_resnet50(),7)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        saliency_50 = saliency_maps(models.fcn_resnet50(),7)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(),14)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        fa_50 = feature_ablation(models.fcn_resnet50(),14)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        saliency_50 = saliency_maps(models.fcn_resnet50(),14)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(),15)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        fa_50 = feature_ablation(models.fcn_resnet50(),15)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        saliency_50 = saliency_maps(models.fcn_resnet50(),15)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        grad_cam_50 = grad_cam(models.fcn_resnet50(),19)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        fa_50 = feature_ablation(models.fcn_resnet50(),19)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        saliency_50 = saliency_maps(models.fcn_resnet50(),19)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),2)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        fa_101 = feature_ablation(models.fcn_resnet101(),2)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),2)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),6)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        fa_101 = feature_ablation(models.fcn_resnet101(),6)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),6)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),7)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        fa_101 = feature_ablation(models.fcn_resnet101(),7)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),7)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),14)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        fa_101 = feature_ablation(models.fcn_resnet101(),14)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),14)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),15)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        fa_101 = feature_ablation(models.fcn_resnet101(),15)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),15)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        grad_cam_101 = grad_cam(models.fcn_resnet101(),19)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        fa_101 = feature_ablation(models.fcn_resnet101(),19)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        saliency_101 = saliency_maps(models.fcn_resnet101(),19)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),2)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),2)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),2)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),6)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),6)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),6)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),7)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),7)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),7)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),14)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),14)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),14)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),15)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),15)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),15)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),19)
+
+        children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        fa_50 = feature_ablation(models.deeplabv3_resnet50(),19)
+
+        children = html.Img(src=fa_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        saliency_50 = saliency_maps(models.deeplabv3_resnet50(),19)
+
+        children = html.Img(src=saliency_50, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),2)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),2)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),2)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),6)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),6)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),6)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),7)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),7)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),7)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),14)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),14)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),14)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),15)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),15)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),15)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),19)
+
+        children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        fa_101 = feature_ablation(models.deeplabv3_resnet101(),19)
+
+        children = html.Img(src=fa_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        saliency_101 = saliency_maps(models.deeplabv3_resnet101(),19)
+
+        children = html.Img(src=saliency_101, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),2)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),2)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),2)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),6)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),6)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),6)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),7)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),7)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),7)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),14)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),14)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),14)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),15)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),15)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),15)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),19)
+
+        children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),19)
+
+        children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
+
+        return children
+    
+    elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),19)
+
+        children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
+
+        return children
+
+    
+
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Show Difference
+    
+
+@app.callback(
+    Output('difference', 'children'),
+    [Input('output-segmentation-1', 'children'),
+     Input('output-segmentation-2', 'children')]
+)
+def calculate_segmentation_difference(children_1, children_2):
+    # Hier nehmen wir an, dass img1 und img2 HTML-Img-Elemente sind
+    if children_1 is not None and children_2 is not None:
+        # Konvertiere das Bild aus dem HTML-Element in eine numpy-Array
+        img1_data = children_1['props']['src'].split(',')[1]
+        img2_data = children_2['props']['src'].split(',')[1]
+        
+        img1_array = np.array(Image.open(io.BytesIO(base64.b64decode(img1_data))))
+        img2_array = np.array(Image.open(io.BytesIO(base64.b64decode(img2_data))))
+
+        # Berechne die Differenz der Bilder
+        difference = np.abs(img1_array - img2_array)
+        
+        # Erstelle ein neues Bild, das die Differenz darstellt (hier kann je nach Bedarf angepasst werden)
+        diff_image = Image.fromarray(difference.astype('uint8'))
+        
+        # Konvertiere das Bild in ein base64-kodiertes Bild, das in HTML angezeigt werden kann
+        buffered = BytesIO()
+        diff_image.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+        
+        # Erstelle das HTML-Element für das Bild
+        diff_img_html = html.Img(src='data:image/png;base64,' + img_str)
+        
+        # Gib das HTML-Element zurück
+        return diff_img_html
+    else:
+        return "No segmentation images available to compare."
+    
+@app.callback(
+     Output('difference_model_names', 'children'),
+        [Input('model_name_1', 'children'),
+        Input('model_name_2', 'children')])
+
+def show_model_names(model_name_1, model_name_2):
+    return f'Difference between {model_name_1} and {model_name_2}'
+
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Label Selection
+
+
+@app.callback(
+    Output('label_1', 'children'),
+    Input('bicycle_f1', 'n_clicks'),
+    Input('bus_f1', 'n_clicks'),
+    Input('car_f1', 'n_clicks'),
+    Input('motorbike_f1', 'n_clicks'),
+    Input('person_f1', 'n_clicks'),
+    Input('train_f1', 'n_clicks'),
+    allow_duplicate = True
+)
+
+def show_labelname_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5, n_clicks_6):
+
+    change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+
+    if 'bicycle_f1' in change_id:
+        return 'Bicycle'
+    elif 'bus_f1' in change_id:
+        return 'Bus'
+    elif 'car_f1' in change_id:
+        return 'Car'
+    elif 'motorbike_f1' in change_id:
+        return 'Motorbike'
+    elif 'person_f1' in change_id:
+        return 'Person'
+    elif 'train_f1' in change_id:
+        return 'Train'
+    else:
+        return ''
+    
+@app.callback(
+    Output('label_2', 'children'),
+    Input('bicycle_f2', 'n_clicks'),
+    Input('bus_f2', 'n_clicks'),
+    Input('car_f2', 'n_clicks'),
+    Input('motorbike_f2', 'n_clicks'),
+    Input('person_f2', 'n_clicks'),
+    Input('train_f2', 'n_clicks'),
+    allow_duplicate = True
+)
+
+def show_label_name_right (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5, n_clicks_6):
+
+    change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+
+    if 'bicycle_f2' in change_id:
+        return 'Bicycle'
+    elif 'bus_f2' in change_id:
+        return 'Bus'
+    elif 'car_f2' in change_id:
+        return 'Car'
+    elif 'motorbike_f2' in change_id:
+        return 'Motorbike'
+    elif 'person_f2' in change_id:
+        return 'Person'
+    elif 'train_f2' in change_id:
+        return 'Train'
+    else:
+        return ''
+
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Difference of x-AI-methods
+    
+@app.callback(
+    Output('difference_xAI', 'children'),
+    [Input('layer_grad_cam_1', 'children'),
+     Input('layer_grad_cam_2', 'children')]
+)
+
+def calculate_xAI_difference(children_1, children_2):
+    # Hier nehmen wir an, dass img1 und img2 HTML-Img-Elemente sind
+    if children_1 is not None and children_2 is not None:
+        # Konvertiere das Bild aus dem HTML-Element in eine numpy-Array
+        img1_data = children_1['props']['src'].split(',')[1]
+        img2_data = children_2['props']['src'].split(',')[1]
+        
+        img1_array = np.array(Image.open(io.BytesIO(base64.b64decode(img1_data))))
+        img2_array = np.array(Image.open(io.BytesIO(base64.b64decode(img2_data))))
+
+        # Berechne die Differenz der Bilder
+        difference1 = np.abs(img1_array - img2_array)
+        difference2 = np.abs(img2_array - img1_array)
+
+        difference = difference1 - difference2
+        
+        # Erstelle ein neues Bild, das die Differenz darstellt (hier kann je nach Bedarf angepasst werden)
+        diff_image = Image.fromarray(difference.astype('uint8'))
+        
+        # Konvertiere das Bild in ein base64-kodiertes Bild, das in HTML angezeigt werden kann
+        buffered = BytesIO()
+        diff_image.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+        
+        # Erstelle das HTML-Element für das Bild
+        diff_img_html = html.Img(src='data:image/png;base64,' + img_str)
+        
+        # Gib das HTML-Element zurück
+        return diff_img_html
+    elif children_1 is None and children_2 is None:
+        return "No xAI-method is chosen in the left and right filter."
+    elif children_1 is None and children_2 is not None:
+        return "No xAI-method is chosen in the left filter."
+    elif children_1 is not None and children_2 is None:
+        return "No xAI-method is chosen in the right filter."
+    
+    
+
+@app.callback(
+    Output('method_left', 'children'),
+    Input('layer_grad_cam_f1', 'n_clicks'),
+    Input('fa_f1', 'n_clicks'),
+    Input('saliency_f1', 'n_clicks'),
+    allow_duplicate = True
+)
+
+def show_method_name_left (n_clicks_1, n_clicks_2, n_clicks_3):
+
+    change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+
+    if 'layer_grad_cam_f1' in change_id:
+        return 'Layer Grad-CAM'
+    
+    elif 'fa_f1' in change_id:
+        return 'Feature Ablation'
+    elif 'saliency_f1' in change_id:
+        return 'Saliency Maps'
+
+    else:
+        return ''
+    
+@app.callback(
+    Output('method_right', 'children'),
+    Input('layer_grad_cam_f2', 'n_clicks'),
+    Input('fa_f2', 'n_clicks'),
+    Input('saliency_f2', 'n_clicks'),
+    allow_duplicate = True
+)
+
+def show_method_name_right (n_clicks_1, n_clicks_2, n_clicks_3):
+
+    change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+
+    if 'layer_grad_cam_f2' in change_id:
+        return 'Layer Grad-CAM'
+    elif 'fa_f2' in change_id:
+        return 'Feature Ablation'
+    elif 'saliency_f2' in change_id:
+        return 'Saliency Maps'
+    else:
+        return ''
+
+@app.callback(
+     Output('difference_method_names', 'children'),
+        [Input('method_right', 'children'),
+        Input('method_left', 'children')])
+
+def show_method_names(method_1, method_2):
+    return f'Difference between {method_1} and {method_2}'
 
 # Include CSS file
 app.css.append_css({
