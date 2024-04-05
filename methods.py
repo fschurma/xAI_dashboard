@@ -1,6 +1,6 @@
 from torchvision import transforms
 from PIL import Image
-from captum.attr import LayerGradCam, FeatureAblation, IntegratedGradients, Saliency, InputXGradient
+from captum.attr import LayerGradCam, FeatureAblation, IntegratedGradients, Saliency, InputXGradient, Lime
 from pytorch_grad_cam.utils.image import show_cam_on_image
 import cv2
 import numpy as np
@@ -171,6 +171,56 @@ def saliency_maps(model, label, input_tensor=input_tensor, normalized_inp=normal
     saliency_on_image = saliency_on_image()
 
     return saliency_on_image
+
+
+def lime (model, label, input_tensor=input_tensor, normalized_inp=normalized_inp):
+    
+    def outputs(normalized_inp, model):
+                        
+        out = model(normalized_inp)['out']
+        out_max = torch.argmax(out, dim=1, keepdim=True)
+
+        return  out_max
+
+
+    out_max = outputs(normalized_inp, model)
+
+
+    def agg_segmentation_wrapper_lime(inp):
+        model_out = model(inp)['out']
+        # Creates binary matrix with 1 for original argmax class for each pixel
+        # and 0 otherwise. Note that this may change when the input is ablated
+        # so we use the original argmax predicted above, out_max.
+        selected_inds = torch.zeros_like(model_out[0:1]).scatter_(1, out_max, 1)
+        return (model_out * selected_inds).sum(dim=(2,3))
+    
+
+    
+    def lime_on_image():
+        targets = [2,6,7,14,15,19]
+
+        lime = Lime(agg_segmentation_wrapper_lime)
+
+        baselines = torch.zeros_like(normalized_inp) 
+
+        for target in targets:
+            if target in [label]:
+
+                lime_attr = lime.attribute(normalized_inp, target=target, feature_mask=out_max, baselines=baselines, n_samples=20)
+                lime_attr_norm = (lime_attr - lime_attr.min()) / (lime_attr.max() - lime_attr.min())
+                lime_attr_float = lime_attr_norm.detach().numpy().astype(np.float32)
+                lime_heatmap = lime_attr_float[0, 0]
+                lime_heatmap_fin = cv2.resize(lime_heatmap, (input_tensor.shape[2], input_tensor.shape[1]))
+
+                lime_img = show_cam_on_image(np.transpose(input_tensor.detach().cpu().numpy(), (1, 2, 0)), lime_heatmap_fin, use_rgb=True, image_weight=0.4)
+
+                return lime_img
+                                    
+    lime_on_image = lime_on_image()
+
+    return lime_on_image
+    
+
                 
                 
 

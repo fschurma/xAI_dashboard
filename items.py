@@ -51,6 +51,7 @@ def items_method_f1():
         dbc.DropdownMenuItem('LayerGradCam', id='layer_grad_cam_f1'),
         dbc.DropdownMenuItem('FeatureAblation', id='fa_f1'),
         dbc.DropdownMenuItem('Saliency Maps', id='saliency_f1'),
+        dbc.DropdownMenuItem('LIME', id='lime_f1')
         ]
 
 def items_method_f2():
@@ -58,6 +59,7 @@ def items_method_f2():
         dbc.DropdownMenuItem('LayerGradCam', id='layer_grad_cam_f2'),
         dbc.DropdownMenuItem('FeatureAblation', id='fa_f2'),
         dbc.DropdownMenuItem('Saliency Maps', id='saliency_f2'),
+        dbc.DropdownMenuItem('LIME', id='lime_f2')
         ]
 
 def items_labels_f1():
