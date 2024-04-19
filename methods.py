@@ -214,6 +214,8 @@ def lime (model, label, input_tensor=input_tensor, normalized_inp=normalized_inp
 
                 lime_img = show_cam_on_image(np.transpose(input_tensor.detach().cpu().numpy(), (1, 2, 0)), lime_heatmap_fin, use_rgb=True, image_weight=0.4)
 
+                lime_img = Image.fromarray(lime_img)
+
                 return lime_img
                                     
     lime_on_image = lime_on_image()
