@@ -14,7 +14,8 @@ import models
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Layout
 
 app.layout = html.Div(children=[
         html.Div(children=[

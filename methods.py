@@ -1,6 +1,6 @@
 from torchvision import transforms
 from PIL import Image
-from captum.attr import LayerGradCam, FeatureAblation, IntegratedGradients, Saliency, InputXGradient, Lime
+from captum.attr import LayerGradCam, FeatureAblation, Saliency, Lime
 from pytorch_grad_cam.utils.image import show_cam_on_image
 import cv2
 import numpy as np
