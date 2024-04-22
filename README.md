@@ -1,1 +1,1 @@
-Initialize Dashboard
+This xAI dashboard is for imagesegmentation.
