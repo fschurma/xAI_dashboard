@@ -21,4 +21,4 @@
 4. Open the demo app from topbar
 5. Choose a segmentation model in both filter sections
 
-![PNG] (./assets/images/model_selection.png)
+![PNG](/assets/images/model_selection.png)
