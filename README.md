@@ -3,9 +3,8 @@
 ## Implementation
 
 1. Clone this directory
-2. Environment installation
+2. Install following modules
 
- The following modules must be installed in your environment or in your python.
     - dash
     - dash_bootstrap_components
     - torch
