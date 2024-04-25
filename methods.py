@@ -6,12 +6,16 @@ import cv2
 import numpy as np
 import torch
 from models import fcn_resnet50, fcn_resnet101, deeplabv3_resnet50, deeplabv3_resnet101, deeplabv3_mobilenetv3_large
+import platform
         
         
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
+if platform.system() == 'Darwin':
+    image_path = f'assets/images/demo_picture.png'
+elif platform.system() == 'Windows':
+    image_path = f'assets\images\demo_picture.png'
 
-image_path = '/assets/images/demo_picture.png'
 
 
 input_image = Image.open(image_path)
