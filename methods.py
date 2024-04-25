@@ -11,7 +11,7 @@ from models import fcn_resnet50, fcn_resnet101, deeplabv3_resnet50, deeplabv3_re
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 
-image_path = 'assets/images/demo_picture.png'
+image_path = '/assets/images/demo_picture.png'
 
 
 input_image = Image.open(image_path)
