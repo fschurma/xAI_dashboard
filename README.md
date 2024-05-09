@@ -8,10 +8,7 @@
     - dash
     - dash_bootstrap_components
     - torch
-    - numpy
-    - base64
-    - io
-    - PIL
+    - pillow
     - torchvision
     - captum
     - opencv
