@@ -14,8 +14,9 @@
     - PIL
     - torchvision
     - captum
-    - pytorch_grad_cam
     - opencv
+
+The pytorch_grad_cam module has to be installed with `pip install grad-cam`.
 
 ## Use of the app
 1. Let run dashboard.py
