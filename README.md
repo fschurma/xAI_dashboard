@@ -10,7 +10,7 @@
     - torch
     - pillow
     - torchvision
-    - captum
+    - captum (If it doesn't work in conda it should be installed with `pip install captum`.)
     - opencv
 
 The pytorch_grad_cam module has to be installed with `pip install grad-cam`.
