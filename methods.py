@@ -15,6 +15,8 @@ if platform.system() == 'Darwin':
     image_path = f'assets/images/demo_picture.png'
 elif platform.system() == 'Windows':
     image_path = f'assets\images\demo_picture.png'
+elif platform.system() == 'Linux':
+    image_path = f'assets/images/demo_picture.png'
 
 
 
