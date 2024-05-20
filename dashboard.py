@@ -1,3 +1,4 @@
+# Importing Libraries
 import dash
 from dash import html, dcc, Input, Output
 import dash_bootstrap_components as dbc
@@ -11,7 +12,9 @@ from PIL import Image
 import io
 from methods import grad_cam, feature_ablation, saliency_maps, lime
 import models
+import platform
 
+# Initialize the Dash app with the Bootstrap theme for dash_bootstrap_components
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -19,7 +22,9 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div(children=[
         html.Div(children=[
+            # Top Bar
             html.P('File'),
+            # Show Demo Dropdown Menu
             dbc.DropdownMenu(label='Show Demo',
                             children = [
                                 dbc.DropdownMenuItem('Show Demo', id='show_demo', n_clicks=0)
@@ -28,46 +33,56 @@ app.layout = html.Div(children=[
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'}
             ),
+            # Add Window Dropdown Menu
             dbc.DropdownMenu(label='Add Window',
                             children = items.items_windows(),
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'}
             ),
+            # Choose Model Dropdown Menu
             dbc.DropdownMenu(label='Choose Model',
                             children=items.items_models_top_bar(),
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'}
             ),
+            # Import Image Dropdown Menu
             dbc.DropdownMenu(label='Import Image', children=[
+                            # Import Image Section
                             dbc.DropdownMenuItem(dcc.Upload(html.P('Import Image'), accept='.jpg, .png, .tiff', id='import_image_1'))],
                             direction='down',
                             toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                             style={'margin': '5px'})
                 
         ], id='top-bar'),
-
+        # Card Container
         html.Div([
+            # This is the right card
             html.Div(id='card_1', children=[
                 html.P('Choose Model'),
                 html.Img(src='assets/images/neural_network.png', alt='Model Pictogram')
             ]),
+            # This is the left card
             html.Div(id='card_2', children=[
                 html.P('Import Image'),
                 html.Img(src='assets/images/image.png', alt='Image Pictogram', n_clicks=0)      
             ])
         ], id='card_container'),
-
+        # Row Container, where the user can choose the model and import the image
         html.Div([
+            # Dropdown Container on the right below the card
             html.Div(id='dropdown_container_1', children=[
+                # Dropdown Menu to choose the model
                 dbc.DropdownMenu( label='Choose Model',
                 children=items.items_models_card(),
                 direction='down',
                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0.5px solid black'}
                 )]
             ),
+            # Dropdown Container on the left below the card
             html.Div(id='dropdown_container_2', children=[
+                # Dropdown Menu to import the image
                 dbc.DropdownMenu(label='Import Image', children=[
                             dbc.DropdownMenuItem(dcc.Upload(html.P('Import Image'), accept='.jpg, .png, .tiff', id='import_image_2'))],
                             direction='down',
@@ -76,102 +91,131 @@ app.layout = html.Div(children=[
             
                 ], id='row_container'),
             
-
-
-            html.Div([ 
+            # Result Container, that displays if the show demo button is clicked
+            html.Div([
+                # Result frame on the top left
                 html.Div(id='result_1_div', children=[
+                    # Filter Container on the top left
                     html.Div(id='filter_container_1', children=[
+                        # Dropdown Menu to choose the model inte the filter section on the top left
                         dbc.DropdownMenu(label='Model selection',
                                 size='sm',
                                 children=items.items_models_filter_section1(),
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
+                        # Display the model name if a model is selected
                         html.P(id='model_name_1'),
+                        # Dropdown Menu to choose the label in the filter section on the top left
                         dbc.DropdownMenu(label='Label selection',
                                 size='sm',
                                 children=items.items_labels_f1(),
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
+                        # Display the label name if a label is selected
                         html.P(id='label_1'),
+                        # Dropdown Menu to choose the method in the filter section on the top left
                         dbc.DropdownMenu(label='Method selection',
                                 size='sm',
                                 children=items.items_method_f1(),
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
+                        # Display the method name if a method is selected
                         html.P(id='method_left')
                                   ]),
-
+                    # Container for the demo picture, model segmentation and the methods heatmaps on the top left
                     html.Div(id='image-upload-container_1', children=[
+                        # Loading bar if the results is loading
                         dcc.Loading(id='loading-1', children=[
                             #html.Div(id='output-image-upload_1'),
                             html.Div(id='demo_upload_1'),
                             html.Div(id='output-segmentation-1'),
                             html.Div(id='layer_grad_cam_1'),
-                            html.Div(id='fa_1')
+                            html.Div(id='fa_1'),
+                            html.Div(id='saliency_1'),
+                            html.Div(id='lime_1')
                     ], type='default')
                         
                         
                         ]),
                 ]),
+                # Result frame on the top right
                 html.Div(id='result_2_div', children=[
+                    # Filter Container on the top right
                     html.Div(id='filter_container_2', children=[
+                        # Dropdown Menu to choose the model in the filter section on the top right
                         dbc.DropdownMenu(label='Model selection',
                                 size='sm',
                                 children=items.items_models_filter_section2(),
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
+                        # Display the model name if a model is selected
                         html.P(id='model_name_2'),
+                        # Dropdown Menu to choose the label in the filter section on the top right
                         dbc.DropdownMenu(label='Label selection',
                                 size='sm',
                                 children=items.items_labels_f2(),
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
-                        
+                        # Display the label name if a label is selected
                         html.P(id='label_2'),
+                        # Dropdown Menu to choose the method in the filter section on the top right
                         dbc.DropdownMenu(label='Method selection',
                                 size='sm',
                                 children=items.items_method_f2(),
                                 direction='down',
                                 toggle_style={'color': 'black', 'background-color': 'grey', 'border': '0px solid black'},
                                 style={'margin': '5px'}),
+                        # Display the method name if a method is selected
                         html.P(id='method_right')
                             ]),
+                    # Container for the demo picture, model segmentation and the methods heatmaps on the top right
                     html.Div(id='image-upload-container_2', children=[
+                        # Loading bar if the results are loading
                         dcc.Loading(id='loading-2', children=[
                             #html.Div(id='output-image-upload_2'),
                             html.Div(id='demo_upload_2'),
                             html.Div(id='output-segmentation-2'),
-                            html.Div(id='layer_grad_cam_2')
+                            html.Div(id='layer_grad_cam_2'),
+                            html.Div(id='fa_2'),
+                            html.Div(id='saliency_2'),
+                            html.Div(id='lime_2')
                         ], type='default')
                 ]),     
             ])
                 ], id='result_container'),
-
+            # Difference Container, that displays the difference between the two models
             html.Div([
+                # Boundary around the difference container
                 html.Div(id='difference_result', children=[
+                    # Display the name of both models that are selected
                     html.H4(id='difference_model_names'),
+                    # Loading bar if the results are loading
                     dcc.Loading(id='loading-3', children=[
+                        # Display the difference between the two models
                         html.Div(
                              id='difference'
                             )
                     ], type='default')
             ]),
-
-                html.Div(id='performance_div', children=[
-                    html.H4(id='difference_method_names'),
-                    dcc.Loading(id='loading-4', children=[
-                        html.Div(
-                            id='difference_xAI'
-                            )
-                    ], type='default')
-                ])
-            ],id='difference_container')
+                # Container, that displays the difference between the two xAI methods
+            html.Div(id='performance_div', children=[
+                # Display the name of both xAI methods that are selected
+                html.H4(id='difference_method_names'),
+                # Loading bar if the results are loading
+                dcc.Loading(id='loading-4', children=[
+                    # Display the difference between the two xAI methods
+                    html.Div(
+                        id='difference_xAI'
+                        )
+                ], type='default')
             ])
+        ],id='difference_container')
+    ])
 
 
 
@@ -181,6 +225,7 @@ app.layout = html.Div(children=[
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## Demo, Upload and Results
 
+# Callback to show the demo picture if the dropdown menu is clicked
 @app.callback(
     Output('result_1_div', 'style'),
     Output('result_2_div', 'style'),
@@ -191,12 +236,17 @@ app.layout = html.Div(children=[
     Output('card_container', 'style'),
     Output('row_container', 'style'),
     Input('result', 'n_clicks'),
+    # Placeholder for the image upload
     Input('import_image_1', 'contents'),
     Input('import_image_2', 'contents'),
     Input('show_demo', 'n_clicks'),
     allow_duplicate=True
 )
 def show_result_window_div(n_clicks_1, contents_1, contents_2, n_clicks_demo):
+    '''
+    Function to show the result window if the show demo button is clicked. Additionally, the placeholder to upload an image is also in this function.
+    '''
+    # This is the placeholder function to displayed if an individual image is uploaded
     if n_clicks_1 and n_clicks_1 > 0 or contents_1 is not None or contents_2 is not None:
         result_1_div_style = {'display': 'block'}
         result_2_div_style = {'display': 'block'}
@@ -210,6 +260,7 @@ def show_result_window_div(n_clicks_1, contents_1, contents_2, n_clicks_demo):
 
         return result_1_div_style, result_2_div_style, img1, img2, difference_result_style, performance_div_style, card_container_style, row_container_style
 
+    # This is the part of the function that define what is displayed if the show demo button is clicked
     elif n_clicks_demo and n_clicks_demo > 0:
         result_1_div_style = {'display': 'block'}
         result_2_div_style = {'display': 'block'}
@@ -218,9 +269,13 @@ def show_result_window_div(n_clicks_1, contents_1, contents_2, n_clicks_demo):
         card_container_style = {'display': 'none'}
         row_container_style = {'display': 'none'}
 
-
-        img1 = html.Img(src='assets/images/demo_picture.png', alt='Image 1')
-        img2 = html.Img(src='assets/images/demo_picture.png', alt='Image 2')
+        # Load the demo picture dependig on the platform the dashboard is running on
+        if platform.system() == 'Darwin' or platform.system() == 'Linux':
+            img1 = html.Img(src=f'assets/images/demo_picture.png', alt='Image 1')
+            img2 = html.Img(src=f'assets/images/demo_picture.png', alt='Image 2')
+        elif platform.system() == 'Windows':
+            img1 = html.Img(src = f'assets\images\demo_picture.png', alt= 'Image 1')
+            img2 = html.Img(src = f'assets\images\demo_picture.png', alt= 'Image 2')
 
         return result_1_div_style, result_2_div_style, img1, img2, difference_result_style, performance_div_style, card_container_style, row_container_style
     
@@ -241,6 +296,7 @@ def show_result_window_div(n_clicks_1, contents_1, contents_2, n_clicks_demo):
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## Segmentation
 
+# Callback to display the image segmentation results on the left side
 @app.callback(
     Output('output-segmentation-1', 'children'),
     Input('fcn-resnet101_f1', 'n_clicks'),
@@ -252,86 +308,116 @@ def show_result_window_div(n_clicks_1, contents_1, contents_2, n_clicks_demo):
 )
 
 def image_segmentation_filter_left(n_clicks_1,  n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5):
+    '''
+    Function to display the image segmentation results on the left side depending on the model that is selected in the filter section.
+    '''
 
+    # Get the id of the dropdown menu that is clicked
     change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     
+    # Check which model is selected in the filter section
     if 'fcn-resnet101_f1' in change_id:
             
+            # Load the image and the segmentation results
             input_image, output_predictions = predict_fcn_resnet101('assets/images/demo_picture.png')
             palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
 
+            # Define the colors for the segmentation results
             colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
             colors = (colors % 255).numpy().astype("uint8")
 
+            # Resize the segmentation results to the size of the input image
             r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
             r.putpalette(colors)
 
+            # Display the segmentation results
             children = html.Img(src=r, alt='Segmented Image')
 
             return children
     
 
-    
+    # Check which model is selected in the filter section
     elif 'fcn-resnet50_f1' in change_id:
             
+            # Load the image and the segmentation results
             input_image, output_predictions = predict_fcn_resnet50('assets/images/demo_picture.png')
-            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
 
+            # Define the colors for the segmentation results
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
             colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
             colors = (colors % 255).numpy().astype("uint8")
 
+            # Resize the segmentation results to the size of the input image
             r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
             r.putpalette(colors)
 
+            # Display the segmentation results
             children = html.Img(src=r, alt='Segmented Image')
 
             return children
     
+    # Check which model is selected in the filter section
     elif 'deeplabv3-resnet50_f1' in change_id:
                 
+            # Load the image and the segmentation results
             input_image, output_predictions = predict_deeplabv3_resnet50('assets/images/demo_picture.png')
+            
+            # Define the colors for the segmentation results
             palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
-    
             colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
             colors = (colors % 255).numpy().astype("uint8")
     
+            # Resize the segmentation results to the size of the input image
             r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
             r.putpalette(colors)
+            
+            # Display the segmentation results
             children = html.Img(src=r, alt='Segmented Image')
     
             return children
     
+    # Check which model is selected in the filter section
     elif 'deeplabv3-resnet101_f1' in change_id:
                     
+            # Load the image and the segmentation results
             input_image, output_predictions = predict_deeplabv3_resnet101('assets/images/demo_picture.png')
+            
+            # Define the colors for the segmentation results
             palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
-    
             colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
             colors = (colors % 255).numpy().astype("uint8")
         
+            # Resize the segmentation results to the size of the input image
             r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
             r.putpalette(colors)
+            
+            # Display the segmentation results
             children = html.Img(src=r, alt='Segmented Image')
         
             return children
     
+    # Check which model is selected in the filter section
     elif 'deeplabv3-mobilenetv3-large_f1' in change_id:
                             
+            # Load the image and the segmentation results
             input_image, output_predictions = predict_deeplabv3_mobilenetv3_large('assets/images/demo_picture.png')
-            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
                 
+            # Define the colors for the segmentation results
+            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
             colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
             colors = (colors % 255).numpy().astype("uint8")
                 
+            # Resize the segmentation results to the size of the input image
             r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
             r.putpalette(colors)
 
+            # Display the segmentation results
             children = html.Img(src=r, alt='Segmented Image')
                 
             return children
     
 
-
+# Callback to display the image segmentation results on the right side
 @app.callback(
     Output('output-segmentation-2', 'children'),
     Input('fcn-resnet101_f2', 'n_clicks'),
@@ -344,94 +430,109 @@ def image_segmentation_filter_left(n_clicks_1,  n_clicks_2, n_clicks_3, n_clicks
 
 def image_segmentation_filter_right(n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5):
 
-
+    # Get the id of the dropdown menu that is clicked
     change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
+    # Check which model is selected in the filter section
     if 'fcn-resnet101_f2' in change_id:
             
-            input_image, output_predictions = predict_fcn_resnet101('assets/images/demo_picture.png')
-            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+        # Load the image and the segmentation results
+        input_image, output_predictions = predict_fcn_resnet101('assets/images/demo_picture.png')
 
-            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
-            colors = (colors % 255).numpy().astype("uint8")
+        # Define the colors for the segmentation results
+        palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+        colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+        colors = (colors % 255).numpy().astype("uint8")
 
-            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
-            r.putpalette(colors)
+        # Resize the segmentation results to the size of the input image
+        r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+        r.putpalette(colors)
 
-            children = html.Img(src=r, alt='Segmented Image')
+        # Display the segmentation results
+        children = html.Img(src=r, alt='Segmented Image')
 
-            print("Children:", type(children))
-
-
-            return children
+        return children
     
+    # Check which model is selected in the filter section
     elif 'fcn-resnet50_f2' in change_id:
             
-            
-            input_image, output_predictions = predict_fcn_resnet50('assets/images/demo_picture.png')
-            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+        # Load the image and the segmentation results
+        input_image, output_predictions = predict_fcn_resnet50('assets/images/demo_picture.png')
 
-            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
-            colors = (colors % 255).numpy().astype("uint8")
+        # Define the colors for the segmentation results
+        palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+        colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+        colors = (colors % 255).numpy().astype("uint8")
 
-            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
-            r.putpalette(colors)
+        # Resize the segmentation results to the size of the input image
+        r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+        r.putpalette(colors)
 
-            children = html.Img(src=r, alt='Segmented Image')
+        # Display the segmentation results
+        children = html.Img(src=r, alt='Segmented Image')
 
-            return children
+        return children
     
+    # Check which model is selected in the filter section
     elif 'deeplabv3-resnet50_f2' in change_id:
             
-                    
-            input_image, output_predictions = predict_deeplabv3_resnet50('assets/images/demo_picture.png')
-            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+        # Load the image and the segmentation results           
+        input_image, output_predictions = predict_deeplabv3_resnet50('assets/images/demo_picture.png')
         
-            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
-            colors = (colors % 255).numpy().astype("uint8")
+        # Define the colors for the segmentation results
+        palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+        colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+        colors = (colors % 255).numpy().astype("uint8")
         
-            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
-            r.putpalette(colors)
+        # Resize the segmentation results to the size of the input image
+        r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+        r.putpalette(colors)
 
-            children = html.Img(src=r, alt='Segmented Image')
+        # Display the segmentation results
+        children = html.Img(src=r, alt='Segmented Image')
         
-            return children
+        return children
     
+    # Check which model is selected in the filter section
     elif 'deeplabv3-resnet101_f2' in change_id:
 
-                            
-            input_image, output_predictions = predict_deeplabv3_resnet101('assets/images/demo_picture.png')
-            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+        # Load the image and the segmentation results                 
+        input_image, output_predictions = predict_deeplabv3_resnet101('assets/images/demo_picture.png')
             
-            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
-            colors = (colors % 255).numpy().astype("uint8")
+        # Define the colors for the segmentation results
+        palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+        colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+        colors = (colors % 255).numpy().astype("uint8")
                 
-            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
-            r.putpalette(colors)
+        r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+        r.putpalette(colors)
 
-            children = html.Img(src=r, alt='Segmented Image')
+        children = html.Img(src=r, alt='Segmented Image')
                 
-            return children
+        return children
     
     elif 'deeplabv3-mobilenetv3-large_f2' in change_id:
             
-                                    
-            input_image, output_predictions = predict_deeplabv3_mobilenetv3_large('assets/images/demo_picture.png')
-            palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
+        # Load the image and the segmentation results                       
+        input_image, output_predictions = predict_deeplabv3_mobilenetv3_large('assets/images/demo_picture.png')
+        palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])
                         
-            colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
-            colors = (colors % 255).numpy().astype("uint8")
+        # Define the colors for the segmentation results
+        colors = torch.as_tensor([i for i in range(21)])[:, None] * palette
+        colors = (colors % 255).numpy().astype("uint8")
                         
-            r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
-            r.putpalette(colors)
+        # Resize the segmentation results to the size of the input image
+        r = Image.fromarray(output_predictions.byte().cpu().numpy()).resize(input_image.size)
+        r.putpalette(colors)
 
-            children = html.Img(src=r, alt='Segmented Image')
+        # Display the segmentation results
+        children = html.Img(src=r, alt='Segmented Image')
 
-            return children
+        return children
     
                         
     
-    
+# Callback to display the name model, that is chosen in the left filter section, in the title of the difference container
 @app.callback(
     Output('model_name_1', 'children'),
     Input('fcn-resnet50_f1', 'n_clicks'),
@@ -443,6 +544,10 @@ def image_segmentation_filter_right(n_clicks_1, n_clicks_2, n_clicks_3, n_clicks
 )
 
 def show_model_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5):
+
+    '''
+    Function to display the name of the model that is selected in the filter section on the left side.
+    '''
 
     change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
@@ -459,6 +564,7 @@ def show_model_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clic
     else:
         return None
     
+ # Callback to display the name model, that is chosen in the right filter section, in the title of the difference container   
 @app.callback(
     Output('model_name_2', 'children'),
     Input('fcn-resnet50_f2', 'n_clicks'),
@@ -470,6 +576,10 @@ def show_model_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clic
 )
 
 def show_model_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5):
+    
+    '''
+    Function to display the name of the model that is selected in the filter section on the right side.
+    '''
 
     change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
@@ -489,6 +599,7 @@ def show_model_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clic
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
 ## xAI
 
+# Callback to display the xAI methods results on the left side
 @app.callback(
      Output('layer_grad_cam_1', 'children'),
      Input('layer_grad_cam_f1', 'n_clicks'),
@@ -499,6 +610,10 @@ def show_model_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clic
      Input('label_1', 'children'))
 
 def show_xAI_results_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, children_1, children_2):
+
+    '''
+    Function to display the xAI methods results on the left side depending on the method, label and model that are selected in the filter section.
+    '''
 
     change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
@@ -2213,7 +2328,11 @@ def show_xAI_results_right (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, chil
      Input('output-segmentation-2', 'children')]
 )
 def calculate_segmentation_difference(children_1, children_2):
-    # Hier nehmen wir an, dass img1 und img2 HTML-Img-Elemente sind
+    
+    '''
+    This function calculates the difference between two segmentation images.
+    '''
+
     if children_1 is not None and children_2 is not None:
         # Konvertiere das Bild aus dem HTML-Element in eine numpy-Array
         img1_data = children_1['props']['src'].split(',')[1]
@@ -2247,13 +2366,19 @@ def calculate_segmentation_difference(children_1, children_2):
         return "No segmentation image available in the left filter."
     elif children_1 is not None and children_2 is None:
         return "No segmentation image available in the right filter."
-    
+
+# Title of the difference image container    
 @app.callback(
      Output('difference_model_names', 'children'),
         [Input('model_name_1', 'children'),
         Input('model_name_2', 'children')])
 
 def show_model_names(model_name_1, model_name_2):
+
+    '''
+    This function shows the model names in the difference image container.
+    '''
+
     if model_name_1 is not None and model_name_2 is None:
         return f'Model difference between {model_name_1} and Model right'
     elif model_name_1 is None and model_name_2 is not None:
@@ -2329,7 +2454,12 @@ def show_labelname (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5, 
 )
 
 def calculate_xAI_difference(children_1, children_2):
-    # Hier nehmen wir an, dass img1 und img2 HTML-Img-Elemente sind
+    
+    '''
+    This function calculates the difference between two xAI-methods.
+    '''
+
+
     if children_1 is not None and children_2 is not None:
         # Konvertiere das Bild aus dem HTML-Element in eine numpy-Array
         img1_data = children_1['props']['src'].split(',')[1]
