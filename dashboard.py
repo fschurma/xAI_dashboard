@@ -615,403 +615,628 @@ def show_xAI_results_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, child
     Function to display the xAI methods results on the left side depending on the method, label and model that are selected in the filter section.
     '''
 
+    # Get the id of the dropdown menu that is clicked
     change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
+    # Check which model and label is selected in the filter section
     if ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(), 2)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(), 2)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(), 2)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(), 2)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
 
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(), 6)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(), 6)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(), 6)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(), 6)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
         
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(), 7)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(), 7)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(), 7)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(), 7)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
 
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(), 14)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(), 14)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(), 14)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(), 14)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
 
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(), 15)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(), 15)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(), 15)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(), 15)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
 
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(), 19)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(), 19)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(), 19)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(), 19)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),2)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),2)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),2)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),2)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),6)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),6)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),6)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),6)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),7)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),7)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),7)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),7)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),14)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),14)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),14)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),14)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),15)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),15)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),15)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),15)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),19)
 
+        # Callback to display the xAI methods results on the right side
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),19)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),19)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),19)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),2)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),2)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),2)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),2)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),6)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),6)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),6)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),6)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),7)
 
@@ -1020,448 +1245,700 @@ def show_xAI_results_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, child
         return children
     
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),7)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),7)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),7)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),14)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),14)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),14)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),14)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),15)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),15)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),15)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),15)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),19)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),19)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),19)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),19)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) > 0 and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),2)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),2)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('salinecy_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),2)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),2)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),6)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),6)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),6)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),6)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),7)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),7)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),7)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),7)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),14)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),14)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),14)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),14)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),15)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),15)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),15)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),15)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),19)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),19)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),19)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),19)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),2)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),2)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),2)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),2)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
 
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),6)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),6)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),6)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),6)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),7)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),7)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),7)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),7)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),14)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),14)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),14)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),14)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),15)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),15)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),15)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),15)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),19)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),19)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),19)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f1' in change_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),19)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+# Callback to display the xAI results for the right image
 @app.callback(
      Output('layer_grad_cam_2', 'children'),
      Input('layer_grad_cam_f2', 'n_clicks'),
@@ -1472,847 +1949,1331 @@ def show_xAI_results_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, child
      Input('label_2', 'children'))
 
 def show_xAI_results_right (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, children_1, children_2):
-
+    """
+    This function displays the xAI results for the right image based on the selected model and label.
+    """
+    
+    # Get the ID of the clicked button
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
+    # Check which model and label is selected in the filter section
     if ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(),2)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(), 2)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(), 2)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bicycle':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(), 2)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(),6)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(),6)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(),6)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Bus':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(),6)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(),7)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(),7)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(),7)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Car':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(),7)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(),14)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(),14)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(),14)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Motorbike':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(),14)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(),15)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(),15)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(),15)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Person':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(),15)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.fcn_resnet50(),19)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.fcn_resnet50(),19)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.fcn_resnet50(),19)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet50' and children_2 == 'Train':
+        # Load the LIME results
         lime_50 = lime(models.fcn_resnet50(),19)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),2)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),2)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),2)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bicycle':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),2)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),6)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),6)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),6)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Bus':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),6)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),7)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),7)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),7)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Car':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),7)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),14)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),14)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),14)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Motorbike':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),14)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),15)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),15)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),15)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Person':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),15)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.fcn_resnet101(),19)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.fcn_resnet101(),19)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.fcn_resnet101(),19)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'FCN ResNet101' and children_2 == 'Train':
+        # Load the LIME results
         lime_101 = lime(models.fcn_resnet101(),19)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),2)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),2)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),2)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bicycle':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),2)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),6)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),6)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),6)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Bus':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),6)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),7)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),7)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),7)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Car':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),7)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),14)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),14)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),14)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Motorbike':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),14)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),15)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),15)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),15)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Person':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),15)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        # Load the Grad-CAM results
         grad_cam_50 = grad_cam(models.deeplabv3_resnet50(),19)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_50, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        # Load the Feature Ablation results
         fa_50 = feature_ablation(models.deeplabv3_resnet50(),19)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_50, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        # Load the Saliency Maps results
         saliency_50 = saliency_maps(models.deeplabv3_resnet50(),19)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_50, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet50' and children_2 == 'Train':
+        # Load the LIME results
         lime_50 = lime(models.deeplabv3_resnet50(),19)
 
+        # Display the LIME results
         children = html.Img(src=lime_50, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),2)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),2)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),2)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bicycle':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),2)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),6)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),6)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),6)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Bus':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),6)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),7)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),7)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),7)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Car':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),7)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),14)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),14)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),14)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Motorbike':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),14)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),15)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),15)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),15)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Person':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),15)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        # Load the Grad-CAM results
         grad_cam_101 = grad_cam(models.deeplabv3_resnet101(),19)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_101, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        # Load the Feature Ablation results
         fa_101 = feature_ablation(models.deeplabv3_resnet101(),19)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_101, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        # Load the Saliency Maps results
         saliency_101 = saliency_maps(models.deeplabv3_resnet101(),19)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_101, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results  
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 ResNet101' and children_2 == 'Train':
+        # Load the LIME results
         lime_101 = lime(models.deeplabv3_resnet101(),19)
 
+        # Display the LIME results
         children = html.Img(src=lime_101, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),2)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),2)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),2)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bicycle':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),2)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),6)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),6)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),6)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Bus':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),6)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),7)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),7)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),7)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Car':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),7)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),14)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),14)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),14)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Motorbike':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),14)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),15)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),15)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),15)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Person':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),15)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('layer_grad_cam_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        # Load the Grad-CAM results
         grad_cam_mobilenet = grad_cam(models.deeplabv3_mobilenetv3_large(),19)
 
+        # Display the Grad-CAM results
         children = html.Img(src=grad_cam_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Grad-CAM results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('fa_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        # Load the Feature Ablation results
         fa_mobilenet = feature_ablation(models.deeplabv3_mobilenetv3_large(),19)
 
+        # Display the Feature Ablation results
         children = html.Img(src=fa_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Feature Ablation results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('saliency_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        # Load the Saliency Maps results
         saliency_mobilenet = saliency_maps(models.deeplabv3_mobilenetv3_large(),19)
 
+        # Display the Saliency Maps results
         children = html.Img(src=saliency_mobilenet, alt='Grad-CAM Image')
 
+        # Return the Saliency Maps results
         return children
     
+    # Check which model and label is selected in the filter section
     elif ('lime_f2' in changed_id) and children_1 == 'DeepLabV3 MobileNetV3-Large' and children_2 == 'Train':
+        # Load the LIME results
         lime_mobilenet = lime(models.deeplabv3_mobilenetv3_large(),19)
 
+        # Display the LIME results
         children = html.Img(src=lime_mobilenet, alt='Grad-CAM Image')
 
+        # Return the LIME results
         return children
 
     
@@ -2322,6 +3283,7 @@ def show_xAI_results_right (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, chil
 ## Show Difference
     
 
+# Calculate the difference between two segmentation images
 @app.callback(
     Output('difference', 'children'),
     [Input('output-segmentation-1', 'children'),
@@ -2333,41 +3295,52 @@ def calculate_segmentation_difference(children_1, children_2):
     This function calculates the difference between two segmentation images.
     '''
 
+    # Check if both images are available
     if children_1 is not None and children_2 is not None:
-        # Konvertiere das Bild aus dem HTML-Element in eine numpy-Array
+        # Load the base64-encoded image data
         img1_data = children_1['props']['src'].split(',')[1]
         img2_data = children_2['props']['src'].split(',')[1]
         
+        # Convert the base64-encoded image data to a numpy array
         img1_array = np.array(Image.open(io.BytesIO(base64.b64decode(img1_data))))
         img2_array = np.array(Image.open(io.BytesIO(base64.b64decode(img2_data))))
 
-        # Berechne die Differenz der Bilder
+        # Calculate the absolute difference between the two images
         difference1 = np.abs(img1_array - img2_array)
         difference2 = np.abs(img2_array - img1_array)
 
+        # Calculate the difference between the two differences
         difference = difference1 - difference2
         
-        # Erstelle ein neues Bild, das die Differenz darstellt (hier kann je nach Bedarf angepasst werden)
+        # Convert the difference to an image
         diff_image = Image.fromarray(difference.astype('uint8'))
         
-        # Konvertiere das Bild in ein base64-kodiertes Bild, das in HTML angezeigt werden kann
+        # Convert the difference image to a base64-encoded string
         buffered = BytesIO()
         diff_image.save(buffered, format="PNG")
         img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
         
-        # Erstelle das HTML-Element für das Bild
+        # Create an HTML element to display the difference image
         diff_img_html = html.Img(src='data:image/png;base64,' + img_str)
         
-        # Gib das HTML-Element zurück
+        # Return the difference image
         return diff_img_html
+    
+    # Check if no images are available
     elif children_1 is None and children_2 is None:
+        # Return a message that no images are available
         return "No segmentation images available to compare."
+    
+    # Check if only one image is available
     elif children_1 is None and children_2 is not None:
+        # Return a message that only one image is available
         return "No segmentation image available in the left filter."
+    # Check if only one image is available
     elif children_1 is not None and children_2 is None:
+        # Return a message that only one image is available
         return "No segmentation image available in the right filter."
 
-# Title of the difference image container    
+# Show the model names in the difference image container  
 @app.callback(
      Output('difference_model_names', 'children'),
         [Input('model_name_1', 'children'),
@@ -2393,6 +3366,7 @@ def show_model_names(model_name_1, model_name_2):
 ## Label Selection
 
 
+# Show the label names in the difference image container
 @app.callback(
     Output('label_1', 'children'),
     Output('label_2', 'children'),
@@ -2412,6 +3386,10 @@ def show_model_names(model_name_1, model_name_2):
 )
 
 def show_labelname (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5, n_clicks_6, n_clicks_7, n_clicks_8, n_clicks_9, n_clicks_10, n_clicks_11, n_clicks_12):
+
+    """
+    This function shows the label names in the difference image container.
+    """
 
     change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
@@ -2447,6 +3425,7 @@ def show_labelname (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4, n_clicks_5, 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## Difference of x-AI-methods
     
+# Calculate the difference between two xAI-methods
 @app.callback(
     Output('difference_xAI', 'children'),
     [Input('layer_grad_cam_1', 'children'),
@@ -2460,42 +3439,55 @@ def calculate_xAI_difference(children_1, children_2):
     '''
 
 
+    # Check if both images are available
     if children_1 is not None and children_2 is not None:
-        # Konvertiere das Bild aus dem HTML-Element in eine numpy-Array
+        
+        # Load the base64-encoded image data
         img1_data = children_1['props']['src'].split(',')[1]
         img2_data = children_2['props']['src'].split(',')[1]
         
+        # Convert the base64-encoded image data to a numpy array
         img1_array = np.array(Image.open(io.BytesIO(base64.b64decode(img1_data))))
         img2_array = np.array(Image.open(io.BytesIO(base64.b64decode(img2_data))))
 
-        # Berechne die Differenz der Bilder
+        # Calculate the absolute difference between the two images
         difference1 = np.abs(img1_array - img2_array)
         difference2 = np.abs(img2_array - img1_array)
 
         difference = difference1 - difference2
         
-        # Erstelle ein neues Bild, das die Differenz darstellt (hier kann je nach Bedarf angepasst werden)
+        # Convert the difference to an image
         diff_image = Image.fromarray(difference.astype('uint8'))
         
-        # Konvertiere das Bild in ein base64-kodiertes Bild, das in HTML angezeigt werden kann
+        # Convert the difference image to a base64-encoded string
         buffered = BytesIO()
         diff_image.save(buffered, format="PNG")
         img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
         
-        # Erstelle das HTML-Element für das Bild
+        # Create an HTML element to display the difference image
         diff_img_html = html.Img(src='data:image/png;base64,' + img_str)
         
-        # Gib das HTML-Element zurück
+        # Return the difference image
         return diff_img_html
+    
+    # Check if no images are available
     elif children_1 is None and children_2 is None:
+        # Return a message that no images are available
         return "No xAI-method is chosen in the left and right filter."
+    
+    # Check if only one image is available
     elif children_1 is None and children_2 is not None:
+        # Return a message that only one image is available
         return "No xAI-method is chosen in the left filter."
+    
+    # Check if only one image is available
     elif children_1 is not None and children_2 is None:
+        # Return a message that only one image is available
         return "No xAI-method is chosen in the right filter."
     
     
 
+# Show the xAI-method names in the difference image container
 @app.callback(
     Output('method_left', 'children'),
     Input('layer_grad_cam_f1', 'n_clicks'),
@@ -2506,6 +3498,10 @@ def calculate_xAI_difference(children_1, children_2):
 )
 
 def show_method_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4):
+
+    """
+    This function shows the xAI-method names in the difference image container.
+    """
 
     change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
@@ -2522,6 +3518,8 @@ def show_method_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4):
     else:
         return None
     
+
+# Show the xAI-method names in the difference image container
 @app.callback(
     Output('method_right', 'children'),
     Input('layer_grad_cam_f2', 'n_clicks'),
@@ -2532,6 +3530,10 @@ def show_method_name_left (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4):
 )
 
 def show_method_name_right (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4):
+
+    """
+    This function shows the xAI-method names in the difference image container.
+    """
 
     change_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
 
@@ -2546,6 +3548,8 @@ def show_method_name_right (n_clicks_1, n_clicks_2, n_clicks_3, n_clicks_4):
     else:
         return None
 
+
+# Show the xAI-method names in the difference image container
 @app.callback(
      Output('difference_method_names', 'children'),
         [Input('method_left', 'children'),

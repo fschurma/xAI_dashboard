@@ -1,3 +1,5 @@
+# In this file the future work for importing the image and process it to display it in the web app is done.
+
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## Image Upload
 
