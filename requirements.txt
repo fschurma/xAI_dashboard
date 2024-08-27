@@ -3,6 +3,6 @@ dash==2.15.0
 dash-bootstrap-components==1.5.0
 torch==2.2.0
 torchvision==0.17.0
-pillow==10.2.0
+pillow==10.3.0
 opencv-python==4.9.0.80
 grad-cam==1.5.0
